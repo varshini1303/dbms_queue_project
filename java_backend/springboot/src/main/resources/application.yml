@@ -1,0 +1,14 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: bank-queue-management-api
+
+bank:
+  frontend-url: "https://queue-wiz-home.lovable.app"
+  cors-allowed-origins:
+    - "https://queue-wiz-home.lovable.app"
+    - "http://localhost:5173"
+    - "http://localhost:3000"
+    - "*"

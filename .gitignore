@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+.env
+.venv
+env/
+venv/
+ENV/
+*.class
+target/
+.vercel
+cloudflared.exe
+*.zip
+.DS_Store
+Thumbs.db

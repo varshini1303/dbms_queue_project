@@ -1,0 +1,212 @@
+/* BankQueue Professional Theme: Navy Blue, Black & White */
+:root {
+    --navy-dark: #0a0f1d;
+    --navy-primary: #0f172a;
+    --navy-surface: #1e293b;
+    --navy-border: #334155;
+    --bank-blue: #0284c7;
+    --bank-blue-hover: #0369a1;
+    --bank-accent: #2563eb;
+    --emerald-live: #10b981;
+    --pure-black: #020617;
+    --pure-white: #ffffff;
+    --light-bg: #f8fafc;
+    --card-border: #e2e8f0;
+    --text-primary: #0f172a;
+    --text-muted: #64748b;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--light-bg);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* Navbar */
+.navbar {
+    background: rgba(15, 23, 42, 0.98);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.brand-badge {
+    background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+    color: #ffffff;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nav-link {
+    color: #cbd5e1 !important;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: color 0.2s ease;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: #38bdf8 !important;
+}
+
+/* Hero Section */
+.hero {
+    background: radial-gradient(circle at 50% 0%, #1e293b 0%, #0f172a 60%, #020617 100%);
+    color: #ffffff;
+    padding: 5.5rem 1rem 4rem;
+    border-bottom: 1px solid #1e293b;
+    position: relative;
+}
+
+.hero-pill {
+    background: rgba(2, 132, 199, 0.15);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    color: #38bdf8;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 6px 16px;
+    border-radius: 9999px;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+}
+
+.hero h1 {
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    font-size: 3.25rem;
+    line-height: 1.15;
+}
+
+.hero p {
+    color: #94a3b8;
+    font-size: 1.15rem;
+    max-width: 680px;
+    margin: 0 auto 2rem;
+}
+
+/* Buttons */
+.btn-bank-primary {
+    background-color: var(--bank-blue);
+    color: #ffffff;
+    font-weight: 600;
+    border-radius: 10px;
+    padding: 0.75rem 1.75rem;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.btn-bank-primary:hover {
+    background-color: var(--bank-blue-hover);
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
+}
+
+.btn-bank-outline {
+    background-color: transparent;
+    color: #ffffff;
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    font-weight: 600;
+    border-radius: 10px;
+    padding: 0.75rem 1.75rem;
+    transition: all 0.2s ease;
+}
+
+.btn-bank-outline:hover {
+    background-color: #ffffff;
+    color: var(--navy-primary);
+    border-color: #ffffff;
+}
+
+/* Cards */
+.card-custom {
+    background: #ffffff;
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 1.75rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px -4px rgba(0, 0, 0, 0.08);
+}
+
+.card-navy {
+    background: var(--navy-primary);
+    border: 1px solid var(--navy-surface);
+    color: #ffffff;
+}
+
+.counter-card {
+    background: #ffffff;
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 1.25rem;
+    position: relative;
+    border-top: 4px solid var(--bank-blue);
+}
+
+.token-display {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: var(--bank-blue);
+    letter-spacing: -1px;
+}
+
+/* Badges */
+.badge-live {
+    background-color: var(--emerald-live);
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.status-serving { background: #dcfce7; color: #166534; }
+.status-approaching { background: #fef3c7; color: #92400e; }
+.status-waiting { background: #e0f2fe; color: #075985; }
+.status-completed { background: #f1f5f9; color: #475569; }
+
+/* Tabs */
+.nav-pills-bank .nav-link {
+    color: var(--text-muted) !important;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 8px 18px;
+}
+
+.nav-pills-bank .nav-link.active {
+    background-color: var(--navy-primary) !important;
+    color: #ffffff !important;
+}
+
+/* Footer */
+.footer {
+    background: var(--navy-dark);
+    color: #94a3b8;
+    padding: 4rem 0 2rem;
+    border-top: 1px solid var(--navy-surface);
+}
+
+.footer h6 {
+    color: #ffffff;
+    font-weight: 700;
+}
