@@ -37,7 +37,6 @@ app = FastAPI(
 )
 
 # CORS Configuration
-# Accepts public cloud frontend, localhost, or any configured custom origin
 allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "")
 origins = [
     "https://queue-wiz-home.lovable.app",
@@ -93,56 +92,57 @@ def health_check():
     return {
         "status": "healthy",
         "service": "Bank Queue Full Application",
-        "frontend": "https://queue-wiz-home.lovable.app",
         "local_app": "http://127.0.0.1:8000",
         "database": "connected",
     }
 
 
-# Root route serving the full-featured SPA
-@app.get("/", response_class=HTMLResponse)
-def index_page():
-    index_file = os.path.join(TEMPLATES_DIR, "index.html")
-    if os.path.exists(index_file):
-        with open(index_file, "r", encoding="utf-8") as f:
+def serve_template(template_name: str, extra_script: str = "") -> HTMLResponse:
+    file_path = os.path.join(TEMPLATES_DIR, template_name)
+    if os.path.exists(file_path):
+        with open(file_path, "r", encoding="utf-8") as f:
             html = f.read()
-        # Inject BACKEND_URL if configured in environment
         backend_url = os.getenv("BACKEND_URL", "")
+        scripts = ""
         if backend_url:
-            html = html.replace("</head>", f"<script>window.BACKEND_URL = '{backend_url}';</script></head>")
+            scripts += f"<script>window.BACKEND_URL = '{backend_url}';</script>"
+        if extra_script:
+            scripts += extra_script
+        if scripts:
+            html = html.replace("</head>", f"{scripts}</head>")
         return HTMLResponse(content=html)
-    return HTMLResponse("<h1>BankQueue System: index.html template not found</h1>")
+    return HTMLResponse(f"<h1>Template {template_name} not found</h1>")
+
+
+# 1. Root route: Opening page is now the Login & Sign Up page
+@app.get("/", response_class=HTMLResponse)
+def root_page():
+    return serve_template("login.html")
 
 
 @app.get("/login", response_class=HTMLResponse)
 def login_page():
-    login_file = os.path.join(TEMPLATES_DIR, "login.html")
-    if os.path.exists(login_file):
-        with open(login_file, "r", encoding="utf-8") as f:
-            html = f.read()
-        backend_url = os.getenv("BACKEND_URL", "")
-        if backend_url:
-            html = html.replace("</head>", f"<script>window.BACKEND_URL = '{backend_url}';</script></head>")
-        return HTMLResponse(content=html)
-    return HTMLResponse("<h1>Login page template not found</h1>")
+    return serve_template("login.html")
 
 
 @app.get("/register", response_class=HTMLResponse)
 def register_page():
-    login_file = os.path.join(TEMPLATES_DIR, "login.html")
-    if os.path.exists(login_file):
-        with open(login_file, "r", encoding="utf-8") as f:
-            html = f.read()
-        html = html.replace("<body>", "<body><script>document.addEventListener('DOMContentLoaded', () => { const t = document.getElementById('tab-register'); if(t) t.click(); });</script>")
-        return HTMLResponse(content=html)
-    return HTMLResponse("<h1>Register page template not found</h1>")
+    script = "<script>document.addEventListener('DOMContentLoaded', () => { if (typeof switchAuthTab === 'function') switchAuthTab('register'); });</script>"
+    return serve_template("login.html", extra_script=script)
+
+
+# 2. Authenticated Dashboard & Home Page
+@app.get("/home", response_class=HTMLResponse)
+def home_page():
+    return serve_template("index.html")
+
+
+@app.get("/dashboard", response_class=HTMLResponse)
+def dashboard_page():
+    return serve_template("index.html")
 
 
 @app.get("/live", response_class=HTMLResponse)
 def live_page():
-    """Shortcut to live queue view."""
-    index_file = os.path.join(TEMPLATES_DIR, "index.html")
-    with open(index_file, "r", encoding="utf-8") as f:
-        html = f.read()
-    html = html.replace("<body>", "<body><script>window.location.hash='#live';</script>")
-    return HTMLResponse(content=html)
+    script = "<script>window.location.hash='#live';</script>"
+    return serve_template("index.html", extra_script=script)

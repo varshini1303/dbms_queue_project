@@ -47,11 +47,8 @@ function saveAuth(token, user) {
 function handleLogout() {
     localStorage.removeItem("bank_token");
     localStorage.removeItem("bank_user");
-    // Clear any previous form data to guarantee isolation
     resetBookingForm();
-    updateAuthUI();
-    // If on a subpage or want a clean refresh
-    window.location.hash = "#home";
+    window.location.replace("/login");
 }
 
 function updateAuthUI() {
@@ -95,23 +92,27 @@ function updateAuthUI() {
 
 async function initAuth() {
     const token = getAuthToken();
-    if (token) {
-        try {
-            const res = await fetch(`${BACKEND_URL}/api/v1/auth/me`, {
-                headers: { "Authorization": `Bearer ${token}` }
-            });
-            if (res.ok) {
-                const user = await res.json();
-                localStorage.setItem("bank_user", JSON.stringify(user));
-            } else {
-                localStorage.removeItem("bank_token");
-                localStorage.removeItem("bank_user");
-            }
-        } catch (e) {
-            console.warn("Auth check offline fallback", e);
-        }
+    if (!token) {
+        window.location.replace("/login");
+        return;
     }
-    updateAuthUI();
+    try {
+        const res = await fetch(`${BACKEND_URL}/api/v1/auth/me`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        if (res.ok) {
+            const user = await res.json();
+            localStorage.setItem("bank_user", JSON.stringify(user));
+            updateAuthUI();
+        } else {
+            localStorage.removeItem("bank_token");
+            localStorage.removeItem("bank_user");
+            window.location.replace("/login");
+        }
+    } catch (e) {
+        console.warn("Auth check offline fallback", e);
+        updateAuthUI();
+    }
 }
 
 function openAuthModal(mode) {
