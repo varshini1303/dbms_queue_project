@@ -9,7 +9,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     full_name = Column(String(120), nullable=False)
-    phone = Column(String(20), unique=True, index=True, nullable=False)
+    phone = Column(String(20), unique=False, index=True, nullable=True)
     email = Column(String(120), unique=True, index=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
     role = Column(String(20), default="CUSTOMER")  # CUSTOMER, STAFF, ADMIN
@@ -63,12 +63,12 @@ class Token(Base):
     customer_email = Column(String(120), nullable=True)
     customer_account_number = Column(String(50), nullable=True)
 
-    booking_date = Column(String(20), nullable=False)  # YYYY-MM-DD or "Today", "Tomorrow"
-    time_slot = Column(String(50), nullable=False)     # e.g. "10:30 AM" or "Morning (9:00 AM - 11:00 AM)"
+    booking_date = Column(String(20), nullable=False)  # YYYY-MM-DD
+    time_slot = Column(String(50), nullable=False)     # e.g. "10:30 AM - 11:00 AM"
 
     status = Column(String(30), default="WAITING", index=True)  # WAITING, APPROACHING, SERVING, COMPLETED, CANCELLED, NO_SHOW
     estimated_wait_minutes = Column(Integer, default=15)
-    recommended_arrival_time = Column(String(50), nullable=True) # e.g. "10:15 AM"
+    recommended_arrival_time = Column(String(50), nullable=True)
 
     created_at = Column(DateTime, default=datetime.utcnow)
     called_at = Column(DateTime, nullable=True)

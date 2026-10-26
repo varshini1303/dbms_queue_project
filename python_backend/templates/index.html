@@ -34,11 +34,19 @@
                     <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
                     <li class="nav-item"><a class="nav-link" href="#staff">Staff Portal</a></li>
                     <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
-                    <li class="nav-item"><a class="nav-link text-info fw-bold" href="#" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="bi bi-box-arrow-in-right me-1"></i>Login / Register</a></li>
                 </ul>
-                <div class="d-flex align-items-center gap-2">
-                    <button class="btn btn-sm btn-outline-light" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="bi bi-person me-1"></i><span id="navUserBtnText">Sign In</span></button>
-                    <a href="#book" class="btn btn-sm btn-bank-primary">Get Token</a>
+
+                <!-- Logged Out State in Navbar -->
+                <div id="navAuthLoggedOut" class="d-flex align-items-center gap-2">
+                    <button class="btn btn-sm btn-outline-light" onclick="openAuthModal('login')"><i class="bi bi-box-arrow-in-right me-1"></i>Sign In</button>
+                    <button class="btn btn-sm btn-bank-primary" onclick="openAuthModal('register')">Sign Up</button>
+                </div>
+
+                <!-- Logged In State in Navbar -->
+                <div id="navAuthLoggedIn" class="d-none align-items-center gap-2">
+                    <span class="text-white small fw-bold"><i class="bi bi-person-circle me-1"></i>Hi, <span id="navUserName">Customer</span></span>
+                    <button class="btn btn-sm btn-outline-light" onclick="openMyTokensModal()"><i class="bi bi-ticket-perforated me-1"></i>My Tokens</button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="handleLogout()"><i class="bi bi-box-arrow-right me-1"></i>Sign Out</button>
                 </div>
             </div>
         </div>
@@ -121,7 +129,7 @@
                         <i class="bi bi-calendar2-range"></i>
                     </div>
                     <h5 class="fw-bold">2. Plan Your Time</h5>
-                    <p class="text-muted small">Check the live queue position and reserve a convenient slot up to 2 days ahead.</p>
+                    <p class="text-muted small">Check real-time slot availability and reserve a convenient slot within the next 2 days.</p>
                 </div>
             </div>
             <div class="col-md-4">
@@ -136,56 +144,78 @@
         </div>
     </section>
 
-    <!-- Get Token Booking Form -->
+    <!-- Get Token Booking Form Section -->
     <section id="book" class="container my-5 py-4">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <div class="card-custom">
+                
+                <!-- Gate: When user is NOT logged in -->
+                <div id="bookingAuthRequired" class="card-custom text-center py-5 border border-primary-subtle shadow-sm">
+                    <div class="rounded-circle bg-light border text-primary d-inline-flex p-3 fs-2 mb-3">
+                        <i class="bi bi-lock-fill"></i>
+                    </div>
+                    <h3 class="fw-bold text-navy mb-2">Sign In to Book Your Token From Home</h3>
+                    <p class="text-muted mx-auto" style="max-width: 520px;">
+                        To request a bank token within the next 2 days, view real-time slot availability, and track your active tokens, please sign in or create your account.
+                    </p>
+                    <div class="d-flex justify-content-center gap-3 mt-4">
+                        <button class="btn btn-bank-primary px-4 py-2 fw-bold" onclick="openAuthModal('login')">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                        </button>
+                        <button class="btn btn-bank-outline px-4 py-2 fw-bold" onclick="openAuthModal('register')">
+                            <i class="bi bi-person-plus me-2"></i>Create Free Account
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Active Form: When user IS logged in (No default values) -->
+                <div id="bookingFormWrapper" class="card-custom d-none">
                     <div class="text-center mb-4">
                         <span class="badge bg-primary-subtle text-primary fw-bold px-3 py-2 rounded-pill">DIGITAL RESERVATION</span>
                         <h2 class="fw-bold mt-2">Book Your Token From Home</h2>
-                        <p class="text-muted">Reserve up to 2 days ahead, choose your service, and skip the physical waiting room.</p>
+                        <p class="text-muted">Reserve for today or tomorrow, choose your service, and skip the physical waiting room.</p>
                     </div>
+
+                    <!-- Booking Error / Validation Notice -->
+                    <div id="bookingAlert" class="alert alert-danger py-2 mb-3 d-none" role="alert"></div>
 
                     <form id="formBookToken" onsubmit="handleBookToken(event)">
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold small">Full Name *</label>
-                                <input type="text" id="custName" class="form-control" placeholder="Enter your full name" required value="Siddharth Rao">
+                                <input type="text" id="custName" class="form-control" placeholder="Enter your full name" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold small">Mobile Number *</label>
-                                <input type="tel" id="custPhone" class="form-control" placeholder="+91 98765 43210" required value="+919876543210">
+                                <input type="tel" id="custPhone" class="form-control" placeholder="Enter 10-digit mobile number" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold small">Email Address (Optional)</label>
-                                <input type="email" id="custEmail" class="form-control" placeholder="you@example.com" value="siddharth@example.com">
+                                <input type="email" id="custEmail" class="form-control" placeholder="Enter email address">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold small">Account Number (Optional)</label>
-                                <input type="text" id="custAccount" class="form-control" placeholder="11-digit account number" value="48201938210">
+                                <input type="text" id="custAccount" class="form-control" placeholder="Enter 11-digit account number">
                             </div>
                             <div class="col-12">
                                 <label class="form-label fw-bold small">Banking Service Required *</label>
-                                <select id="bookingService" class="form-select" required></select>
+                                <select id="bookingService" class="form-select" required onchange="handleServiceOrDateChange()">
+                                    <option value="" disabled selected>-- Select a Banking Service --</option>
+                                </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold small">Visit Day *</label>
-                                <select id="bookingDate" class="form-select" required>
-                                    <option value="Today">Today</option>
-                                    <option value="Tomorrow">Tomorrow</option>
-                                    <option value="Day after tomorrow">Day after tomorrow</option>
+                                <label class="form-label fw-bold small">Visit Date (Within 2 Days) *</label>
+                                <select id="bookingDate" class="form-select" required onchange="handleServiceOrDateChange()">
+                                    <option value="" disabled selected>-- Select Visit Date --</option>
                                 </select>
+                                <div class="form-text small text-muted">Only Today and Tomorrow are eligible for home booking.</div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold small">Preferred Time Slot *</label>
-                                <select id="bookingSlot" class="form-select" required>
-                                    <option value="10:00 AM - 10:30 AM">10:00 AM - 10:30 AM</option>
-                                    <option value="10:30 AM - 11:00 AM">10:30 AM - 11:00 AM</option>
-                                    <option value="11:15 AM - 11:45 AM">11:15 AM - 11:45 AM</option>
-                                    <option value="02:00 PM - 02:30 PM">02:00 PM - 02:30 PM</option>
-                                    <option value="03:00 PM - 03:30 PM">03:00 PM - 03:30 PM</option>
+                                <select id="bookingSlot" class="form-select" required onchange="handleSlotChange()">
+                                    <option value="" disabled selected>-- Select Service &amp; Date First --</option>
                                 </select>
+                                <div id="slotAvailabilityInfo" class="form-text small text-muted">Select date and service to view genuine available slots.</div>
                             </div>
                             <div class="col-12 mt-4">
                                 <button type="submit" id="btnBookSubmit" class="btn btn-bank-primary w-100 py-3 fw-bold">
@@ -208,6 +238,7 @@
                             </div>
                             <div class="col-md-8">
                                 <p class="mb-1"><strong>Service:</strong> <span id="resService"></span></p>
+                                <p class="mb-1"><strong>Booking Date &amp; Slot:</strong> <span id="resDateSlot"></span></p>
                                 <p class="mb-1"><strong>Assigned Desk:</strong> <span id="resDesk"></span></p>
                                 <p class="mb-1"><strong>Customers Ahead:</strong> <span id="resAhead"></span></p>
                                 <p class="mb-1"><strong>Estimated Wait:</strong> <span id="resWait"></span></p>
@@ -215,9 +246,15 @@
                                 <div class="small text-muted" id="resNotice"></div>
                             </div>
                         </div>
+                        <div class="mt-3 pt-3 border-top text-end">
+                            <button class="btn btn-sm btn-outline-success fw-bold" onclick="startNewBooking()">
+                                <i class="bi bi-plus-circle me-1"></i>Book Another Token
+                            </button>
+                        </div>
                     </div>
 
                 </div>
+
             </div>
         </div>
     </section>
@@ -277,7 +314,7 @@
                     <p class="text-muted">Enter your digital token number to see your live position and arrival guidance.</p>
 
                     <form onsubmit="handleTrackToken(event)" class="input-group my-4 shadow-sm">
-                        <input type="text" id="trackTokenInput" class="form-control form-control-lg text-center fw-bold" placeholder="e.g. A108, B201" value="A108" required>
+                        <input type="text" id="trackTokenInput" class="form-control form-control-lg text-center fw-bold" placeholder="e.g. A101, B102" required>
                         <button type="submit" class="btn btn-bank-primary px-4 fw-bold">Track My Turn</button>
                     </form>
 
@@ -445,99 +482,101 @@
         </div>
     </section>
 
-    <!-- Embedded Login & Register Modal (Everything in One Link) -->
+    <!-- Complete Login and Sign Up Modal -->
     <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
                 <div class="modal-header text-white p-4 border-0" style="background:#0f172a;">
                     <div>
                         <span class="brand-badge mb-2"><i class="bi bi-bank2"></i>BankQueue</span>
-                        <h5 class="modal-title fw-bold mt-1 text-white" id="modalAuthTitle">Customer & Staff Portal</h5>
-                        <div class="small text-secondary" id="modalAuthSubtitle">Sign in to manage your visits and live queue tokens.</div>
+                        <h5 class="modal-title fw-bold mt-1 text-white" id="modalAuthTitle">Customer Portal Access</h5>
+                        <div class="small text-secondary" id="modalAuthSubtitle">Sign in or register to request bank tokens from home.</div>
                     </div>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4 bg-white text-dark">
-                    <!-- Tabs -->
+                    <!-- Toggle Switch Tabs -->
                     <ul class="nav nav-pills nav-fill mb-3" id="modalAuthTabs" role="tablist">
                         <li class="nav-item">
-                            <button class="nav-link active" id="modal-tab-login" data-bs-toggle="pill" data-bs-target="#modal-pane-login" type="button">Sign In</button>
+                            <button class="nav-link active" id="modal-tab-login" data-bs-toggle="pill" data-bs-target="#modal-pane-login" type="button" onclick="switchModalAuthTab('login')">Sign In</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link" id="modal-tab-register" data-bs-toggle="pill" data-bs-target="#modal-pane-register" type="button">Create Account</button>
+                            <button class="nav-link" id="modal-tab-register" data-bs-toggle="pill" data-bs-target="#modal-pane-register" type="button" onclick="switchModalAuthTab('register')">Sign Up</button>
                         </li>
                     </ul>
+
+                    <!-- Validation Error Alert Box -->
+                    <div id="modalAuthAlert" class="alert alert-danger py-2 mb-3 d-none" role="alert"></div>
 
                     <div class="tab-content" id="modalAuthTabContent">
                         <!-- Sign In Pane -->
                         <div class="tab-pane fade show active" id="modal-pane-login">
                             <form onsubmit="handleModalLogin(event)">
                                 <div class="mb-3">
-                                    <label class="form-label small fw-bold text-navy">Mobile Number or Email</label>
-                                    <input type="text" id="modalLoginIdent" class="form-control" placeholder="Enter phone or email" required value="rohit@example.com">
+                                    <label class="form-label small fw-bold text-navy">Email Address *</label>
+                                    <input type="email" id="modalLoginEmail" class="form-control" placeholder="Enter your email" required autocomplete="email">
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label small fw-bold text-navy">Password</label>
-                                    <input type="password" id="modalLoginPass" class="form-control" placeholder="Enter password" required value="Password123">
+                                    <label class="form-label small fw-bold text-navy">Password *</label>
+                                    <input type="password" id="modalLoginPass" class="form-control" placeholder="Enter password" required autocomplete="current-password">
                                 </div>
-                                <button type="submit" class="btn btn-bank-primary w-100 py-2 fw-bold mb-3">Sign In</button>
+                                <button type="submit" id="btnModalLoginSubmit" class="btn btn-bank-primary w-100 py-2 fw-bold mb-3">Sign In</button>
+                                <div class="text-center small text-muted">
+                                    New to BankQueue? <a href="#" class="text-primary text-decoration-none fw-semibold" onclick="switchModalAuthTab('register')">Create an account</a>
+                                </div>
                             </form>
-                            <!-- 1-Click Demos -->
-                            <div class="pt-2 border-top text-center">
-                                <span class="text-muted small fw-semibold d-block mb-2">1-Click Quick Demos:</span>
-                                <div class="d-flex gap-2 justify-content-center">
-                                    <button class="btn btn-sm btn-light border" onclick="fillModalDemo('rohit@example.com', 'Password123')">
-                                        <i class="bi bi-person text-primary me-1"></i>Customer
-                                    </button>
-                                    <button class="btn btn-sm btn-light border" onclick="fillModalDemo('manager@bankqueue.example', 'Password123')">
-                                        <i class="bi bi-shield text-warning me-1"></i>Staff Manager
-                                    </button>
-                                </div>
-                            </div>
                         </div>
 
-                        <!-- Register Pane -->
+                        <!-- Sign Up Pane -->
                         <div class="tab-pane fade" id="modal-pane-register">
                             <form onsubmit="handleModalRegister(event)">
                                 <div class="mb-2">
                                     <label class="form-label small fw-bold">Full Name *</label>
-                                    <input type="text" id="modalRegName" class="form-control form-control-sm" required placeholder="Full Name">
-                                </div>
-                                <div class="mb-2">
-                                    <label class="form-label small fw-bold">Mobile Number *</label>
-                                    <input type="tel" id="modalRegPhone" class="form-control form-control-sm" required placeholder="+91 98765 43210">
+                                    <input type="text" id="modalRegName" class="form-control form-control-sm" required placeholder="Enter your full name" autocomplete="name">
                                 </div>
                                 <div class="mb-2">
                                     <label class="form-label small fw-bold">Email Address *</label>
-                                    <input type="email" id="modalRegEmail" class="form-control form-control-sm" required placeholder="name@example.com">
+                                    <input type="email" id="modalRegEmail" class="form-control form-control-sm" required placeholder="Enter your email" autocomplete="email">
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label small fw-bold">Password *</label>
+                                    <input type="password" id="modalRegPass" class="form-control form-control-sm" required minlength="6" placeholder="Create password (min 6 chars)" autocomplete="new-password">
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label small fw-bold">Password *</label>
-                                    <input type="password" id="modalRegPass" class="form-control form-control-sm" required placeholder="Min 6 characters">
+                                    <label class="form-label small fw-bold">Confirm Password *</label>
+                                    <input type="password" id="modalRegConfirmPass" class="form-control form-control-sm" required minlength="6" placeholder="Re-enter password to confirm" autocomplete="new-password">
                                 </div>
-                                <button type="submit" class="btn btn-bank-primary w-100 py-2 fw-bold">Create Account</button>
+                                <button type="submit" id="btnModalRegSubmit" class="btn btn-bank-primary w-100 py-2 fw-bold mb-3">Sign Up &amp; Create Account</button>
+                                <div class="text-center small text-muted">
+                                    Already have an account? <a href="#" class="text-primary text-decoration-none fw-semibold" onclick="switchModalAuthTab('login')">Sign In</a>
+                                </div>
                             </form>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                    <!-- Logged In State in Modal -->
-                    <div id="modalLoggedInView" class="d-none text-center py-2">
-                        <div class="rounded-circle bg-light border d-inline-flex p-3 fs-3 text-primary mb-2">
-                            <i class="bi bi-person-check-fill"></i>
-                        </div>
-                        <h5 class="fw-bold mb-0 text-navy" id="modalUserName"></h5>
-                        <p class="small text-muted mb-2" id="modalUserDetail"></p>
-                        <span class="badge bg-success mb-3" id="modalUserRole">Active Customer</span>
-
-                        <div class="p-3 bg-light rounded text-start border mb-3">
-                            <div class="fw-bold small text-navy mb-1">Your Booked Tokens:</div>
-                            <div id="modalUserTokens" class="small text-muted">No active tokens yet.</div>
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            <button class="btn btn-outline-danger btn-sm" onclick="handleModalLogout()">Sign Out</button>
-                        </div>
+    <!-- My Booked Tokens Modal -->
+    <div class="modal fade" id="myTokensModal" tabindex="-1" aria-labelledby="myTokensModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="modal-header text-white p-3 border-0" style="background:#0f172a;">
+                    <div>
+                        <h5 class="modal-title fw-bold text-white mb-0"><i class="bi bi-ticket-perforated me-2"></i>My Booked Tokens</h5>
+                        <div class="small text-secondary">Active reservations and visit history for your account.</div>
                     </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 bg-white text-dark">
+                    <div id="myTokensList" class="table-responsive">
+                        <div class="text-center py-4 text-muted">Loading your tokens...</div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light border-0">
+                    <a href="#book" class="btn btn-sm btn-bank-primary" data-bs-dismiss="modal">Book New Token</a>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -557,6 +596,7 @@
                 <a href="#book" class="text-secondary text-decoration-none">Get Token</a>
                 <a href="#live" class="text-secondary text-decoration-none">Live Queue</a>
                 <a href="#services" class="text-secondary text-decoration-none">Services</a>
+                <a href="/login" class="text-secondary text-decoration-none">Login / Register</a>
                 <a href="/docs" target="_blank" class="text-secondary text-decoration-none">API Docs</a>
             </div>
             <div class="text-muted small">

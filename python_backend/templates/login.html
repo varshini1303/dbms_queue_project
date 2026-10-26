@@ -41,18 +41,9 @@
             border-bottom: 2px solid #0284c7;
             background: transparent;
         }
-        .demo-chip {
-            background: #f1f5f9;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 8px 12px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .demo-chip:hover {
-            background: #e2e8f0;
-            border-color: #cbd5e1;
+        .error-alert {
+            display: none;
+            font-size: 0.875rem;
         }
     </style>
 </head>
@@ -87,12 +78,15 @@
                     <!-- Tabs: Login vs Register -->
                     <ul class="nav nav-tabs nav-tabs-auth nav-fill mb-4" id="authTabs" role="tablist">
                         <li class="nav-item">
-                            <button class="nav-link active" id="tab-login" data-bs-toggle="tab" data-bs-target="#pane-login" type="button">Sign In</button>
+                            <button class="nav-link active" id="tab-login" data-bs-toggle="tab" data-bs-target="#pane-login" type="button" onclick="switchAuthTab('login')">Sign In</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link" id="tab-register" data-bs-toggle="tab" data-bs-target="#pane-register" type="button">Create Account</button>
+                            <button class="nav-link" id="tab-register" data-bs-toggle="tab" data-bs-target="#pane-register" type="button" onclick="switchAuthTab('register')">Sign Up</button>
                         </li>
                     </ul>
+
+                    <!-- Inline Alert Box -->
+                    <div id="authAlert" class="alert alert-danger error-alert py-2 mb-3" role="alert"></div>
 
                     <div class="tab-content" id="authTabContent">
                         
@@ -100,69 +94,71 @@
                         <div class="tab-pane fade show active" id="pane-login">
                             <form id="formLogin" onsubmit="handleLogin(event)">
                                 <div class="mb-3">
-                                    <label class="form-label small fw-bold text-navy">Mobile Number or Email</label>
+                                    <label class="form-label small fw-bold text-navy">Email Address *</label>
                                     <div class="input-group">
-                                        <span class="input-group-text bg-light"><i class="bi bi-person"></i></span>
-                                        <input type="text" id="loginIdent" class="form-control" placeholder="Enter mobile number or email" required value="rohit@example.com">
+                                        <span class="input-group-text bg-light"><i class="bi bi-envelope"></i></span>
+                                        <input type="email" id="loginEmail" class="form-control" placeholder="Enter your registered email" required autocomplete="email">
                                     </div>
                                 </div>
                                 <div class="mb-3">
-                                    <div class="d-flex justify-content-between align-items-center mb-1">
-                                        <label class="form-label small fw-bold text-navy mb-0">Password</label>
-                                        <a href="#" class="small text-decoration-none text-primary" onclick="alert('Demo password is: Password123')">Forgot?</a>
-                                    </div>
+                                    <label class="form-label small fw-bold text-navy">Password *</label>
                                     <div class="input-group">
                                         <span class="input-group-text bg-light"><i class="bi bi-lock"></i></span>
-                                        <input type="password" id="loginPass" class="form-control" placeholder="Enter password" required value="Password123">
+                                        <input type="password" id="loginPass" class="form-control" placeholder="Enter your password" required autocomplete="current-password">
                                     </div>
                                 </div>
                                 <div class="d-grid mb-3">
                                     <button type="submit" id="btnLoginSubmit" class="btn btn-bank-primary py-2 fw-bold">Sign In</button>
                                 </div>
-                            </form>
-
-                            <!-- Quick Demo Logins -->
-                            <div class="pt-3 border-top">
-                                <span class="text-muted small fw-semibold d-block mb-2 text-center">1-Click Demo Logins:</span>
-                                <div class="d-flex gap-2 justify-content-center">
-                                    <div class="demo-chip" onclick="fillDemo('rohit@example.com', 'Password123')">
-                                        <i class="bi bi-person-fill text-primary me-1"></i>Customer Login
-                                    </div>
-                                    <div class="demo-chip" onclick="fillDemo('manager@bankqueue.example', 'Password123')">
-                                        <i class="bi bi-shield-lock-fill text-warning me-1"></i>Staff Manager
-                                    </div>
+                                <div class="text-center small text-muted">
+                                    Don't have an account? <a href="#" class="text-primary text-decoration-none fw-semibold" onclick="switchAuthTab('register')">Sign Up here</a>
                                 </div>
-                            </div>
+                            </form>
                         </div>
 
-                        <!-- 2. REGISTER PANE -->
+                        <!-- 2. SIGN UP PANE -->
                         <div class="tab-pane fade" id="pane-register">
                             <form id="formRegister" onsubmit="handleRegister(event)">
                                 <div class="mb-3">
                                     <label class="form-label small fw-bold text-navy">Full Name *</label>
-                                    <input type="text" id="regName" class="form-control" placeholder="Enter your full name" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label small fw-bold text-navy">Mobile Number *</label>
-                                    <input type="tel" id="regPhone" class="form-control" placeholder="+91 98765 43210" required>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="bi bi-person"></i></span>
+                                        <input type="text" id="regName" class="form-control" placeholder="Enter your full name" required autocomplete="name">
+                                    </div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label small fw-bold text-navy">Email Address *</label>
-                                    <input type="email" id="regEmail" class="form-control" placeholder="Enter email address" required>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="bi bi-envelope"></i></span>
+                                        <input type="email" id="regEmail" class="form-control" placeholder="Enter your email address" required autocomplete="email">
+                                    </div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label small fw-bold text-navy">Password *</label>
-                                    <input type="password" id="regPass" class="form-control" placeholder="Create password (min 6 chars)" required>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="bi bi-lock"></i></span>
+                                        <input type="password" id="regPass" class="form-control" placeholder="Create password (min 6 characters)" required minlength="6" autocomplete="new-password">
+                                    </div>
                                 </div>
-                                <div class="d-grid mb-2">
-                                    <button type="submit" id="btnRegSubmit" class="btn btn-bank-primary py-2 fw-bold">Create Free Account</button>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-navy">Confirm Password *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="bi bi-shield-check"></i></span>
+                                        <input type="password" id="regConfirmPass" class="form-control" placeholder="Re-enter password to confirm" required minlength="6" autocomplete="new-password">
+                                    </div>
+                                </div>
+                                <div class="d-grid mb-3">
+                                    <button type="submit" id="btnRegSubmit" class="btn btn-bank-primary py-2 fw-bold">Sign Up &amp; Create Account</button>
+                                </div>
+                                <div class="text-center small text-muted">
+                                    Already have an account? <a href="#" class="text-primary text-decoration-none fw-semibold" onclick="switchAuthTab('login')">Sign In here</a>
                                 </div>
                             </form>
                         </div>
 
                     </div>
 
-                    <!-- User Profile Card (Displayed when logged in) -->
+                    <!-- User Profile Card (Displayed when already logged in) -->
                     <div id="loggedInView" class="d-none text-center pt-2">
                         <div class="rounded-circle bg-light border d-inline-flex p-3 fs-2 text-primary mb-3">
                             <i class="bi bi-person-check-fill"></i>
@@ -174,14 +170,14 @@
                         <!-- My Tokens Box -->
                         <div class="p-3 bg-light rounded text-start mb-3 border">
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="fw-bold small text-navy">Your Active Tokens</span>
+                                <span class="fw-bold small text-navy">Your Active &amp; Recent Tokens</span>
                                 <button class="btn btn-sm btn-link p-0 text-decoration-none" onclick="loadUserTokens()">Refresh</button>
                             </div>
                             <div id="userTokensList" class="small text-muted">Loading tokens...</div>
                         </div>
 
                         <div class="d-grid gap-2">
-                            <a href="/#book" class="btn btn-bank-primary fw-bold">Book Another Token</a>
+                            <a href="/#book" class="btn btn-bank-primary fw-bold">Book a Bank Token</a>
                             <button class="btn btn-outline-danger btn-sm" onclick="handleLogout()">Sign Out</button>
                         </div>
                     </div>
@@ -194,7 +190,7 @@
 
     <!-- Footer -->
     <div class="text-center py-3 text-secondary small">
-        &copy; 2026 BankQueue System &bull; <a href="/" class="text-info text-decoration-none">Home</a> &bull; <a href="/#live" class="text-info text-decoration-none">Live Queue</a> &bull; <a href="/staff" class="text-info text-decoration-none">Staff Console</a>
+        &copy; 2026 BankQueue System &bull; <a href="/" class="text-info text-decoration-none">Home</a> &bull; <a href="/#live" class="text-info text-decoration-none">Live Queue</a> &bull; <a href="/#services" class="text-info text-decoration-none">Services</a>
     </div>
 
     <!-- Scripts -->
@@ -202,7 +198,6 @@
     <script>
         const BACKEND_URL = window.BACKEND_URL || window.location.origin;
 
-        // Check if already authenticated
         document.addEventListener("DOMContentLoaded", () => {
             const token = localStorage.getItem("bank_token");
             if (token) {
@@ -210,67 +205,135 @@
             }
         });
 
-        function fillDemo(ident, pass) {
-            document.getElementById("loginIdent").value = ident;
-            document.getElementById("loginPass").value = pass;
+        function showError(msg) {
+            const alertBox = document.getElementById("authAlert");
+            if (alertBox) {
+                alertBox.textContent = msg;
+                alertBox.style.display = "block";
+            }
+        }
+
+        function clearError() {
+            const alertBox = document.getElementById("authAlert");
+            if (alertBox) {
+                alertBox.textContent = "";
+                alertBox.style.display = "none";
+            }
+        }
+
+        function switchAuthTab(target) {
+            clearError();
+            if (target === "register") {
+                const regTab = document.getElementById("tab-register");
+                if (regTab) bootstrap.Tab.getOrCreateInstance(regTab).show();
+                document.getElementById("authTitle").textContent = "Create New Account";
+                document.getElementById("authSubtitle").textContent = "Sign up to request bank tokens from home within the next 2 days.";
+            } else {
+                const logTab = document.getElementById("tab-login");
+                if (logTab) bootstrap.Tab.getOrCreateInstance(logTab).show();
+                document.getElementById("authTitle").textContent = "Sign In to Your Account";
+                document.getElementById("authSubtitle").textContent = "Manage your branch visits, booked tokens, and fast queue passes.";
+            }
         }
 
         async function handleLogin(e) {
             e.preventDefault();
-            const ident = document.getElementById("loginIdent").value.trim();
+            clearError();
+            const email = document.getElementById("loginEmail").value.trim();
             const pass = document.getElementById("loginPass").value;
+
+            if (!email) {
+                showError("Please enter your email address.");
+                return;
+            }
+            if (!pass) {
+                showError("Please enter your password.");
+                return;
+            }
+
+            const btn = document.getElementById("btnLoginSubmit");
+            if (btn) btn.disabled = true;
 
             try {
                 const res = await fetch(`${BACKEND_URL}/api/v1/auth/login`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ identifier: ident, password: pass })
+                    body: JSON.stringify({ email: email, password: pass })
                 });
 
                 if (!res.ok) {
                     const err = await res.json().catch(() => ({}));
-                    throw new Error(err.detail || "Invalid login credentials");
+                    throw new Error(err.detail || "Invalid email or password.");
                 }
 
                 const data = await res.json();
                 localStorage.setItem("bank_token", data.access_token);
                 localStorage.setItem("bank_user", JSON.stringify(data.user));
 
-                showLoggedInState(data.user);
+                // Redirect to existing home page get token section
+                window.location.href = "/#book";
             } catch (err) {
-                alert("Login Error: " + err.message);
+                showError(err.message);
+            } finally {
+                if (btn) btn.disabled = false;
             }
         }
 
         async function handleRegister(e) {
             e.preventDefault();
-            const payload = {
-                full_name: document.getElementById("regName").value.trim(),
-                phone: document.getElementById("regPhone").value.trim(),
-                email: document.getElementById("regEmail").value.trim(),
-                password: document.getElementById("regPass").value
-            };
+            clearError();
+            const name = document.getElementById("regName").value.trim();
+            const email = document.getElementById("regEmail").value.trim();
+            const pass = document.getElementById("regPass").value;
+            const confirmPass = document.getElementById("regConfirmPass").value;
+
+            if (name.length < 2) {
+                showError("Please enter your full name.");
+                return;
+            }
+            if (!email || !email.includes("@") || !email.includes(".")) {
+                showError("Please enter a valid email address.");
+                return;
+            }
+            if (pass.length < 6) {
+                showError("Password must be at least 6 characters long.");
+                return;
+            }
+            if (pass !== confirmPass) {
+                showError("Passwords do not match. Please re-enter your password.");
+                return;
+            }
+
+            const btn = document.getElementById("btnRegSubmit");
+            if (btn) btn.disabled = true;
 
             try {
                 const res = await fetch(`${BACKEND_URL}/api/v1/auth/register`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify({
+                        full_name: name,
+                        email: email,
+                        password: pass,
+                        confirm_password: confirmPass
+                    })
                 });
 
                 if (!res.ok) {
                     const err = await res.json().catch(() => ({}));
-                    throw new Error(err.detail || "Registration failed");
+                    throw new Error(err.detail || "Registration failed. Please try again.");
                 }
 
                 const data = await res.json();
                 localStorage.setItem("bank_token", data.access_token);
                 localStorage.setItem("bank_user", JSON.stringify(data.user));
 
-                alert("Account created successfully!");
-                showLoggedInState(data.user);
+                // Redirect to existing home page
+                window.location.href = "/#book";
             } catch (err) {
-                alert("Registration Error: " + err.message);
+                showError(err.message);
+            } finally {
+                if (btn) btn.disabled = false;
             }
         }
 
@@ -284,6 +347,7 @@
                     showLoggedInState(user);
                 } else {
                     localStorage.removeItem("bank_token");
+                    localStorage.removeItem("bank_user");
                 }
             } catch (e) {
                 console.error("Auth check error", e);
@@ -299,21 +363,21 @@
             document.getElementById("authSubtitle").textContent = "Welcome back to BankQueue.";
 
             document.getElementById("userNameDisplay").textContent = user.full_name;
-            document.getElementById("userEmailDisplay").textContent = `${user.email} • ${user.phone}`;
+            document.getElementById("userEmailDisplay").textContent = user.email;
             document.getElementById("userRoleDisplay").textContent = user.role;
 
             document.getElementById("loggedInView").classList.remove("d-none");
-            loadUserTokens(user.phone);
+            loadUserTokens();
         }
 
-        async function loadUserTokens(phone) {
-            const userStr = localStorage.getItem("bank_user");
-            if (!userStr) return;
-            const user = JSON.parse(userStr);
-            const userPhone = phone || user.phone;
+        async function loadUserTokens() {
+            const token = localStorage.getItem("bank_token");
+            if (!token) return;
 
             try {
-                const res = await fetch(`${BACKEND_URL}/api/v1/tokens/my-tokens?phone=${encodeURIComponent(userPhone)}`);
+                const res = await fetch(`${BACKEND_URL}/api/v1/tokens/my-tokens`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
                 const tokens = await res.json();
                 const list = document.getElementById("userTokensList");
                 if (!tokens || tokens.length === 0) {
@@ -324,7 +388,7 @@
                             <div>
                                 <span class="fw-bold text-navy me-1">${t.token_number}</span>
                                 <span>(${t.service_name})</span>
-                                <div class="text-muted" style="font-size: 0.75rem">${t.time_slot} • ${t.desk_label}</div>
+                                <div class="text-muted" style="font-size: 0.75rem">${t.booking_date} &bull; ${t.time_slot}</div>
                             </div>
                             <span class="badge ${t.status === 'SERVING' ? 'bg-success' : 'bg-primary'}">${t.status}</span>
                         </div>

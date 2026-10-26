@@ -1,4 +1,12 @@
 import os
+import sys
+
+# Ensure working directory is the script directory
+current_dir = os.path.dirname(os.path.abspath(__file__))
+os.chdir(current_dir)
+if current_dir not in sys.path:
+    sys.path.insert(0, current_dir)
+
 import uvicorn
 
 if __name__ == "__main__":
@@ -9,10 +17,9 @@ if __name__ == "__main__":
     print("=" * 65)
     print(" Bank Queue Management System — Unified Web Application")
     print(f" Live Web App:      http://127.0.0.1:{port}")
-    print(f" Staff Console:     http://127.0.0.1:{port}/staff")
+    print(f" Staff Console:     http://127.0.0.1:{port}/#staff")
     print(f" Live Queue Board:  http://127.0.0.1:{port}/live")
     print(f" Interactive Docs:  http://127.0.0.1:{port}/docs")
-    print(f" Cloud Frontend:    https://queue-wiz-home.lovable.app")
     print(f" Configured URL:    {backend_url}")
     print("=" * 65)
 

@@ -41,8 +41,8 @@ class TokenCreate(BaseModel):
     customer_email: Optional[str] = None
     customer_account_number: Optional[str] = None
     service_id: int
-    booking_date: str  # "Today", "Tomorrow", or YYYY-MM-DD
-    time_slot: str     # "10:30 AM" or "Morning (9:00 AM - 11:00 AM)"
+    booking_date: str  # YYYY-MM-DD
+    time_slot: str     # e.g. "10:00 AM - 10:30 AM"
 
 
 class TokenOut(BaseModel):
@@ -52,6 +52,7 @@ class TokenOut(BaseModel):
     service_name: str
     customer_name: str
     customer_phone: str
+    customer_email: Optional[str] = None
     customer_account_number: Optional[str] = None
     booking_date: str
     time_slot: str
@@ -83,6 +84,24 @@ class TokenTrackerResponse(BaseModel):
     time_slot: str
 
 
+class SlotInfo(BaseModel):
+    slot: str
+    capacity: int
+    booked: int
+    remaining: int
+    available: bool
+    status_text: str
+
+
+class SlotAvailabilityResponse(BaseModel):
+    service_id: int
+    service_name: str
+    date: str
+    date_label: str
+    is_allowed_date: bool
+    slots: List[SlotInfo]
+
+
 class LiveQueueUpdate(BaseModel):
     id: str
     text: str
@@ -102,21 +121,23 @@ class LiveQueueResponse(BaseModel):
 
 class UserRegister(BaseModel):
     full_name: str
-    phone: str
     email: str
     password: str
+    confirm_password: Optional[str] = None
+    phone: Optional[str] = None
 
 
 class UserLogin(BaseModel):
-    identifier: str  # Email or Phone
+    email: Optional[str] = None
+    identifier: Optional[str] = None  # Accepts either email or phone
     password: str
 
 
 class UserOut(BaseModel):
     id: int
     full_name: str
-    phone: str
     email: str
+    phone: Optional[str] = None
     role: str
 
     class Config:
