@@ -43,23 +43,53 @@ def seed_database(db: Session):
         counters.append(cnt)
     db.commit()
 
-    # 3. Seed Users
-    admin_user = User(
-        full_name="Branch Manager",
-        phone="+919876543210",
-        email="manager@bankqueue.example",
-        password_hash=hash_password("Password123"),
-        role="ADMIN",
-    )
-    demo_customer = User(
-        full_name="Rohit Sharma",
-        phone="+919876543211",
-        email="rohit@example.com",
-        password_hash=hash_password("Password123"),
-        role="CUSTOMER",
-    )
-    db.add(admin_user)
-    db.add(demo_customer)
+    # 3. Seed Users for All 3 Roles: Admin, Employee (Staff), Customer
+    users_to_seed = [
+        User(
+            full_name="Bank Administrator",
+            phone="+919876543201",
+            email="admin@bankqueue.example",
+            password_hash=hash_password("Password123"),
+            role="ADMIN",
+        ),
+        User(
+            full_name="Branch Manager",
+            phone="+919876543210",
+            email="manager@bankqueue.example",
+            password_hash=hash_password("Password123"),
+            role="ADMIN",
+        ),
+        User(
+            full_name="Ramesh Kumar (Bank Employee)",
+            phone="+919876543202",
+            email="staff@bankqueue.example",
+            password_hash=hash_password("Password123"),
+            role="STAFF",
+        ),
+        User(
+            full_name="Priya Sharma (Bank Employee)",
+            phone="+919876543203",
+            email="employee@bankqueue.example",
+            password_hash=hash_password("Password123"),
+            role="STAFF",
+        ),
+        User(
+            full_name="Customer User",
+            phone="+919876543204",
+            email="customer@bankqueue.example",
+            password_hash=hash_password("Password123"),
+            role="CUSTOMER",
+        ),
+        User(
+            full_name="Rohit Sharma",
+            phone="+919876543211",
+            email="rohit@example.com",
+            password_hash=hash_password("Password123"),
+            role="CUSTOMER",
+        ),
+    ]
+    for u in users_to_seed:
+        db.add(u)
     db.commit()
 
     # 4. Seed Tokens matching the website demonstration

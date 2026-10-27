@@ -66,18 +66,31 @@ function updateAuthUI() {
         // User is Logged In
         if (loggedOutNav) loggedOutNav.classList.replace("d-flex", "d-none") || loggedOutNav.classList.add("d-none");
         if (loggedInNav) loggedInNav.classList.replace("d-none", "d-flex") || loggedInNav.classList.remove("d-none");
-        if (navName) navName.textContent = user.full_name.split(" ")[0] || "Customer";
+        if (navName) navName.textContent = user.full_name.split(" ")[0] || "User";
+
+        // Role badge in navbar
+        const roleBadge = document.getElementById("navRoleBadge");
+        if (roleBadge) {
+            if (user.role === "ADMIN") {
+                roleBadge.innerHTML = '<span class="badge bg-danger ms-1"><i class="bi bi-shield-lock-fill me-1"></i>Bank Admin</span>';
+            } else if (user.role === "STAFF") {
+                roleBadge.innerHTML = '<span class="badge bg-warning text-dark ms-1"><i class="bi bi-person-badge-fill me-1"></i>Bank Employee</span>';
+            } else {
+                roleBadge.innerHTML = '<span class="badge bg-success ms-1"><i class="bi bi-person-circle me-1"></i>Customer</span>';
+            }
+        }
+
+        // Show/hide My Tokens button (only for customers)
+        const myTokensBtn = document.getElementById("navMyTokensBtn");
+        if (myTokensBtn) {
+            myTokensBtn.style.display = (user.role === "CUSTOMER") ? "" : "none";
+        }
 
         if (bookingGate) bookingGate.classList.add("d-none");
         if (bookingForm) bookingForm.classList.remove("d-none");
 
-        // Set customer name/email from session if currently empty
-        const nameInput = document.getElementById("custName");
-        const emailInput = document.getElementById("custEmail");
-        const phoneInput = document.getElementById("custPhone");
-        if (nameInput && !nameInput.value) nameInput.value = user.full_name;
-        if (emailInput && !emailInput.value && user.email) emailInput.value = user.email;
-        if (phoneInput && !phoneInput.value && user.phone) phoneInput.value = user.phone;
+        // Strict requirement: All Get Token form fields remain completely empty with placeholders
+        // No automatic prefilling of customer name, email, or phone.
     } else {
         // User is Logged Out
         if (loggedOutNav) loggedOutNav.classList.replace("d-none", "d-flex") || loggedOutNav.classList.remove("d-none");

@@ -50,8 +50,9 @@
 
                 <!-- Logged In State in Navbar -->
                 <div id="navAuthLoggedIn" class="d-none align-items-center gap-2">
-                    <span class="text-white small fw-bold"><i class="bi bi-person-circle me-1"></i>Hi, <span id="navUserName">Customer</span></span>
-                    <button class="btn btn-sm btn-outline-light" onclick="openMyTokensModal()"><i class="bi bi-ticket-perforated me-1"></i>My Tokens</button>
+                    <span id="navRoleBadge"></span>
+                    <span class="text-white small fw-bold"><i class="bi bi-person-circle me-1"></i>Hi, <span id="navUserName">User</span></span>
+                    <button id="navMyTokensBtn" class="btn btn-sm btn-outline-light" onclick="openMyTokensModal()"><i class="bi bi-ticket-perforated me-1"></i>My Tokens</button>
                     <button class="btn btn-sm btn-outline-danger" onclick="handleLogout()"><i class="bi bi-box-arrow-right me-1"></i>Sign Out</button>
                 </div>
             </div>
