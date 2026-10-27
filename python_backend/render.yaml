@@ -2,16 +2,11 @@ services:
   - type: web
     name: bank-queue-management
     env: python
+    rootDir: python_backend
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
-    disk:
-      name: sqlite-data
-      mountPath: /data
-      sizeGB: 1
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.3
-      - key: DATABASE_URL
-        value: sqlite:////data/bank_queue.db
       - key: ALLOWED_ORIGINS
         value: "*"
